@@ -42,9 +42,9 @@ services:
       - "3000:3000"
     environment:
       - PORT=3000
-      - PRODUCT_SERVICE_URL=http://product-service:3001
-      - USER_SERVICE_URL=http://user-service:3002
-      - ORDER_SERVICE_URL=http://order-service:3003
+      - PRODUCT_SERVICE_URL=http://product-service:3001/api/products
+      - USER_SERVICE_URL=http://user-service:3002/api/auth
+      - ORDER_SERVICE_URL=http://order-service:3003/api/orders
     depends_on:
       - product-service
       - user-service
