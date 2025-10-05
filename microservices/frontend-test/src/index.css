@@ -1,0 +1,42 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.api-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.response-container {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  white-space: pre-wrap;
+}
+
+.nav-pills .nav-link.active {
+  background-color: #0d6efd;
+}
+
+.card {
+  margin-bottom: 20px;
+}
+
+.code-box {
+  font-family: monospace;
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 4px;
+  overflow: auto;
+  max-height: 300px;
+}
