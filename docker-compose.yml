@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  product-service:
+    build: 
+      context: ./microservices/product-service
+    container_name: product-service
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./microservices/product-service/.env
+    networks:
+      - microservices-network
+
+  user-service:
+    build:
+      context: ./microservices/user-service
+    container_name: user-service
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./microservices/user-service/.env
+    networks:
+      - microservices-network
+
+  order-service:
+    build:
+      context: ./microservices/order-service
+    container_name: order-service
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./microservices/order-service/.env
+    networks:
+      - microservices-network
+
+  api-gateway:
+    build:
+      context: ./microservices/api-gateway
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - PRODUCT_SERVICE_URL=http://product-service:3001
+      - USER_SERVICE_URL=http://user-service:3002
+      - ORDER_SERVICE_URL=http://order-service:3003
+    depends_on:
+      - product-service
+      - user-service
+      - order-service
+    networks:
+      - microservices-network
+
+  frontend:
+    build:
+      context: ./microservices/frontend-test
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api-gateway
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
