@@ -31,3 +31,25 @@ module "ecr" {
   scan_on_push        = true
   tags                = local.common_tags
 }
+
+module "vpc" {
+  source = "./modules/vpc"
+  vpc_name = "${var.project_name}-${var.environment}-vpc"
+  vpc_cidr = "10.0.0.0/16"
+  tags = local.common_tags
+}
+
+module "eks" {
+  source = "./modules/eks"
+  cluster_name = "${var.project_name}-${var.environment}-cluster"
+  project_name = var.project_name
+  environment = var.environment
+  kubernetes_version = "1.33"
+  vpc_id = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+  control_plane_subnet_ids = module.vpc.public_subnets
+  instance_types = ["t3.small"]
+  min_size = 2
+  max_size = 10
+  desired_size = 2
+}
