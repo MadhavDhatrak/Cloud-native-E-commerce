@@ -143,9 +143,7 @@ microservices/
 └── .gitignore
 ```
 
-## Testing with Postman
 
-Import the Postman collection from `postman/Cloud-native-E-commerce.postman_collection.json` to test all API endpoints.
 
 ## Contributing
 
