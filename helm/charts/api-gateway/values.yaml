@@ -1,0 +1,19 @@
+environment: "production"
+
+image:
+  repository: 841140902741.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-dev-api-gateway
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 3000
+
+# Backend service endpoints
+services:
+  productService:
+    port: 3001
+  userService:
+    port: 3002
+  orderService:
+    port: 3003

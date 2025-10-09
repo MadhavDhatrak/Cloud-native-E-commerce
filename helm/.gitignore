@@ -1,0 +1,73 @@
+# Helm specific ignores
+
+# Dependency directories
+charts/*/charts/
+requirements.lock
+
+# Packaged charts
+*.tgz
+
+# Helm plugin cache
+.helm/
+
+# Values files with sensitive data
+**/values-*.yaml
+**/secrets.yaml
+**/secret-*.yaml
+values.production.yaml
+values.staging.yaml
+values.dev.yaml
+
+# External secrets that should be managed separately
+# (Keep templates but ignore if someone creates actual secret files)
+**/mongodb-credentials.yaml
+**/aws-credentials.yaml
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# Kubeseal binary and archives (already in charts/)
+charts/kubeseal
+charts/*.tar.gz
+charts/LICENSE
+charts/README.md
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Local testing
+*.local.yaml
+test-values.yaml
+
+# Helm diff plugin output
+*.diff
+
+# OS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+

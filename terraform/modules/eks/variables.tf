@@ -61,4 +61,8 @@ variable "desired_size" {
   default     = 2
 }
 
-
+variable "additional_iam_policies" {
+  description = "Additional IAM policies to attach to node group role"
+  type        = map(string)
+  default     = {}
+}

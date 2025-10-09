@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  labels:
+    app: api-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: PRODUCT_SERVICE_URL
+              value: "http://product-service:3001/api/products"
+            - name: USER_SERVICE_URL
+              value: "http://user-service:3002/api/auth"
+            - name: ORDER_SERVICE_URL
+              value: "http://order-service:3003/api/orders"

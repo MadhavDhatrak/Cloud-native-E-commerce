@@ -1,0 +1,16 @@
+
+image:
+  repository: 841140902741.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-dev-order-service
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3003
+
+mongodb:
+  uri: ""
+
+aws:
+  region: "ap-south-1"
+

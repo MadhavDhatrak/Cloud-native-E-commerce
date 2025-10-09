@@ -1,0 +1,13 @@
+
+image:
+  repository: 841140902741.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-dev-frontend-test
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 80
+
+aws:
+  region: "ap-south-1"

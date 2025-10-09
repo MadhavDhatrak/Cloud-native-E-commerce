@@ -39,6 +39,12 @@ module "vpc" {
   tags = local.common_tags
 }
 
+# Add Secrets Manager module for MongoDB credentials (before EKS to get policy ARN)
+module "secrets_manager" {
+  source      = "./modules/secrets-manager"
+  mongodb_uri = var.mongodb_uri
+}
+
 module "eks" {
   source = "./modules/eks"
   cluster_name = "${var.project_name}-${var.environment}-cluster"
@@ -52,4 +58,9 @@ module "eks" {
   min_size = 2
   max_size = 10
   desired_size = 2
+  
+  # Attach the MongoDB secrets reader policy to the node group
+  additional_iam_policies = {
+    SecretsManagerPolicy = module.secrets_manager.secrets_policy_arn
+  }
 }

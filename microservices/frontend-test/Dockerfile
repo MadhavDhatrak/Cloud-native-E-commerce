@@ -1,17 +1,27 @@
-# Development-focused Dockerfile for Vite
-FROM node:20-alpine
+# Production Dockerfile with nginx
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+# Clean install
+RUN npm ci --legacy-peer-deps
 
 COPY . .
 
-# Create .env file to configure Vite for API proxy
-RUN echo 'VITE_API_URL=http://api-gateway:3000' > .env
+# Build for production
+RUN npm run build
 
-EXPOSE 5173
+# Production stage - serve with nginx
+FROM nginx:alpine
 
-CMD ["npm", "run", "start", "--", "--host", "0.0.0.0"]
+# Copy built files to nginx
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -42,3 +42,15 @@ output "eks_oidc_provider_arn" {
   description = "The ARN of the OIDC Provider"
   value       = module.eks.oidc_provider_arn
 }
+
+# MongoDB Secrets Manager outputs
+output "mongodb_secret_name" {
+  description = "Name of the MongoDB secret"
+  value       = module.secrets_manager.mongodb_secret_name
+}
+
+output "mongodb_secret_arn" {
+  description = "ARN of the MongoDB secret"
+  value       = module.secrets_manager.mongodb_secret_arn
+  sensitive   = true
+}

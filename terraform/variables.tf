@@ -15,3 +15,9 @@ variable "environment" {
   type        = string
   default     = "dev"
 }
+
+variable "mongodb_uri" {
+  description = "MongoDB URI to store in AWS Secrets Manager"
+  type        = string
+  sensitive   = true
+}
