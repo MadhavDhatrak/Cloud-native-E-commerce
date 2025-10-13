@@ -85,35 +85,35 @@ jobs:
       - name: Deploy with Helm - API Gateway
         run: |
           helm upgrade --install api-gateway ./helm/charts/api-gateway \
-            --set image.tag=latest \
+            --set image.tag=${{ github.sha }} \
             --set image.repository=${{ env.ECR_REGISTRY }}/ecommerce-dev-api-gateway \
             --namespace default
 
       - name: Deploy with Helm - Frontend
         run: |
           helm upgrade --install frontend-test ./helm/charts/frontend-test \
-            --set image.tag=latest \
+            --set image.tag=${{ github.sha }} \
             --set image.repository=${{ env.ECR_REGISTRY }}/ecommerce-dev-frontend-test \
             --namespace default
 
       - name: Deploy with Helm - User Service
         run: |
           helm upgrade --install user-service ./helm/charts/user-service \
-            --set image.tag=latest \
+            --set image.tag=${{ github.sha }} \
             --set image.repository=${{ env.ECR_REGISTRY }}/ecommerce-dev-user-service \
             --namespace default
 
       - name: Deploy with Helm - Product Service
         run: |
           helm upgrade --install product-service ./helm/charts/product-service \
-            --set image.tag=latest \
+            --set image.tag=${{ github.sha }} \
             --set image.repository=${{ env.ECR_REGISTRY }}/ecommerce-dev-product-service \
             --namespace default
 
       - name: Deploy with Helm - Order Service
         run: |
           helm upgrade --install order-service ./helm/charts/order-service \
-            --set image.tag=latest \
+            --set image.tag=${{ github.sha }} \
             --set image.repository=${{ env.ECR_REGISTRY }}/ecommerce-dev-order-service \
             --namespace default
 
