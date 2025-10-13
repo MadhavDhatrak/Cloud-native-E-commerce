@@ -1,0 +1,124 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: ap-south-1
+  ECR_REGISTRY: 841140902741.dkr.ecr.ap-south-1.amazonaws.com
+  EKS_CLUSTER_NAME: ecommerce-dev-cluster
+
+jobs:
+  build-and-deploy:
+    name: Build, Push to ECR and Deploy via Helm
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and Push API Gateway
+        working-directory: ./microservices/api-gateway
+        run: |
+          docker build -t ${{ env.ECR_REGISTRY }}/ecommerce-dev-api-gateway:${{ github.sha }} .
+          docker tag ${{ env.ECR_REGISTRY }}/ecommerce-dev-api-gateway:${{ github.sha }} ${{ env.ECR_REGISTRY }}/ecommerce-dev-api-gateway:latest
+          docker push ${{ env.ECR_REGISTRY }}/ecommerce-dev-api-gateway:${{ github.sha }}
+          docker push ${{ env.ECR_REGISTRY }}/ecommerce-dev-api-gateway:latest
+
+      - name: Build and Push Frontend
+        working-directory: ./microservices/frontend-test
+        run: |
+          docker build -t ${{ env.ECR_REGISTRY }}/ecommerce-dev-frontend-test:${{ github.sha }} .
+          docker tag ${{ env.ECR_REGISTRY }}/ecommerce-dev-frontend-test:${{ github.sha }} ${{ env.ECR_REGISTRY }}/ecommerce-dev-frontend-test:latest
+          docker push ${{ env.ECR_REGISTRY }}/ecommerce-dev-frontend-test:${{ github.sha }}
+          docker push ${{ env.ECR_REGISTRY }}/ecommerce-dev-frontend-test:latest
+
+      - name: Build and Push User Service
+        working-directory: ./microservices/user-service
+        run: |
+          docker build -t ${{ env.ECR_REGISTRY }}/ecommerce-dev-user-service:${{ github.sha }} .
+          docker tag ${{ env.ECR_REGISTRY }}/ecommerce-dev-user-service:${{ github.sha }} ${{ env.ECR_REGISTRY }}/ecommerce-dev-user-service:latest
+          docker push ${{ env.ECR_REGISTRY }}/ecommerce-dev-user-service:${{ github.sha }}
+          docker push ${{ env.ECR_REGISTRY }}/ecommerce-dev-user-service:latest
+
+      - name: Build and Push Product Service
+        working-directory: ./microservices/product-service
+        run: |
+          docker build -t ${{ env.ECR_REGISTRY }}/ecommerce-dev-product-service:${{ github.sha }} .
+          docker tag ${{ env.ECR_REGISTRY }}/ecommerce-dev-product-service:${{ github.sha }} ${{ env.ECR_REGISTRY }}/ecommerce-dev-product-service:latest
+          docker push ${{ env.ECR_REGISTRY }}/ecommerce-dev-product-service:${{ github.sha }}
+          docker push ${{ env.ECR_REGISTRY }}/ecommerce-dev-product-service:latest
+
+      - name: Build and Push Order Service
+        working-directory: ./microservices/order-service
+        run: |
+          docker build -t ${{ env.ECR_REGISTRY }}/ecommerce-dev-order-service:${{ github.sha }} .
+          docker tag ${{ env.ECR_REGISTRY }}/ecommerce-dev-order-service:${{ github.sha }} ${{ env.ECR_REGISTRY }}/ecommerce-dev-order-service:latest
+          docker push ${{ env.ECR_REGISTRY }}/ecommerce-dev-order-service:${{ github.sha }}
+          docker push ${{ env.ECR_REGISTRY }}/ecommerce-dev-order-service:latest
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'latest'
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_NAME }}
+
+      - name: Deploy with Helm - API Gateway
+        run: |
+          helm upgrade --install api-gateway ./helm/charts/api-gateway \
+            --set image.tag=latest \
+            --set image.repository=${{ env.ECR_REGISTRY }}/ecommerce-dev-api-gateway \
+            --namespace default
+
+      - name: Deploy with Helm - Frontend
+        run: |
+          helm upgrade --install frontend ./helm/charts/frontend-test \
+            --set image.tag=latest \
+            --set image.repository=${{ env.ECR_REGISTRY }}/ecommerce-dev-frontend-test \
+            --namespace default
+
+      - name: Deploy with Helm - User Service
+        run: |
+          helm upgrade --install user-service ./helm/charts/user-service \
+            --set image.tag=latest \
+            --set image.repository=${{ env.ECR_REGISTRY }}/ecommerce-dev-user-service \
+            --namespace default
+
+      - name: Deploy with Helm - Product Service
+        run: |
+          helm upgrade --install product-service ./helm/charts/product-service \
+            --set image.tag=latest \
+            --set image.repository=${{ env.ECR_REGISTRY }}/ecommerce-dev-product-service \
+            --namespace default
+
+      - name: Deploy with Helm - Order Service
+        run: |
+          helm upgrade --install order-service ./helm/charts/order-service \
+            --set image.tag=latest \
+            --set image.repository=${{ env.ECR_REGISTRY }}/ecommerce-dev-order-service \
+            --namespace default
+
+      - name: Verify Deployment
+        run: |
+          kubectl get pods -n default
+          kubectl get services -n default
+
