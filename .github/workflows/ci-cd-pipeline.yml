@@ -91,7 +91,7 @@ jobs:
 
       - name: Deploy with Helm - Frontend
         run: |
-          helm upgrade --install frontend ./helm/charts/frontend-test \
+          helm upgrade --install frontend-test ./helm/charts/frontend-test \
             --set image.tag=latest \
             --set image.repository=${{ env.ECR_REGISTRY }}/ecommerce-dev-frontend-test \
             --namespace default
