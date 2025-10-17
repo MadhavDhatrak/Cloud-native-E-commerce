@@ -1,6 +1,35 @@
 # Cloud-Native E-Commerce Platform
 
-A production-ready, cloud-native e-commerce platform built with microservices architecture, deployed on AWS EKS with automated CI/CD.
+A production-ready, cloud-native e-commerce platform built with microservices architecture, deployed on AWS EKS with automated CI/CD. This project showcases modern DevOps practices and cloud-native design patterns, featuring Infrastructure as Code with Terraform, containerized microservices orchestrated by Kubernetes, secure secrets management with AWS Secrets Manager.
+
+## 📑 Table of Contents
+
+- [ Overview](#-overview)
+- [ Architecture](#️-architecture)
+  - [Services](#services)
+- [ Technology Stack](#️-technology-stack)
+- [ Prerequisites](#-prerequisites)
+  - [For Infrastructure Setup](#for-infrastructure-setup)
+  - [For Local Development](#for-local-development)
+- [ Getting Started](#-getting-started)
+  - [1. Clone the Repository](#1-clone-the-repository)
+  - [2. Infrastructure Setup](#2-infrastructure-setup)
+  - [3. Deploy External Secrets Operator](#3-deploy-external-secrets-operator)
+  - [4. Configure Secrets](#4-configure-secrets)
+  - [5. Set Up GitHub Secrets](#5-set-up-github-secrets)
+  - [6. Deploy Services](#6-deploy-services)
+  - [7. Access the Application](#7-access-the-application)
+- [ CI/CD Pipeline](#-cicd-pipeline)
+- [ API Endpoints](#-api-endpoints)
+  - [User Service](#user-service-users)
+  - [Product Service](#product-service-products)
+  - [Order Service](#order-service-orders)
+- [ Monitoring & Operations](#-monitoring--operations)
+  - [Check Deployment Status](#check-deployment-status)
+  - [Scale Services](#scale-services)
+- [ Local Development](#-local-development-optional)
+
+---
 
 ## 🚀 Overview
 
@@ -13,6 +42,12 @@ This project demonstrates a complete cloud-native application with:
 - **Package Management**: Helm charts for Kubernetes deployments
 - **Cloud-Native Storage**: MongoDB Atlas
 - **Secrets Management**: AWS Secrets Manager + External Secrets Operator
+
+---
+
+![PicsArt_10-17-12 48 28 1](https://github.com/user-attachments/assets/fb608b3d-5566-45be-831a-25c968dadd24)
+
+---
 
 ## 🏗️ Architecture
 
@@ -39,20 +74,6 @@ This project demonstrates a complete cloud-native application with:
    - Order processing and tracking
    - Service Type: ClusterIP (internal only)
 
-### Cloud Infrastructure
-
-```
-Internet → AWS ALB → EKS Cluster → Microservices → MongoDB Atlas
-            ↓
-        AWS VPC (10.0.0.0/16)
-        ├── Public Subnets (3 AZs)
-        │   ├── NAT Gateways
-        │   └── Load Balancers
-        └── Private Subnets (3 AZs)
-            └── EKS Worker Nodes (t3.small)
-                └── Kubernetes Pods
-```
-
 
 ## 🛠️ Technology Stack
 
@@ -74,10 +95,10 @@ Internet → AWS ALB → EKS Cluster → Microservices → MongoDB Atlas
 ### For Infrastructure Setup:
 - AWS Account with appropriate permissions
 - AWS CLI configured
-- Terraform (v1.0+)
+- Terraform 
 - MongoDB Atlas account
 - kubectl
-- Helm 3.x
+- Helm 
 
 ### For Local Development:
 - Node.js (v16 or higher)
@@ -220,74 +241,6 @@ All API requests go through the API Gateway.
 - `PATCH /orders/:id/payment` - Update payment status
 - `PATCH /orders/:id/cancel` - Cancel an order
 
-## 📁 Project Structure
-
-```
-Cloud-native-E-commerce/
-├── .github/
-│   └── workflows/
-│       └── ci-cd-pipeline.yml          # GitHub Actions CI/CD
-├── microservices/
-│   ├── frontend-test/                  # React frontend
-│   │   ├── src/
-│   │   ├── Dockerfile
-│   │   └── nginx.conf
-│   ├── api-gateway/                    # API Gateway
-│   │   ├── src/
-│   │   │   └── index.js
-│   │   └── Dockerfile
-│   ├── user-service/                   # User microservice
-│   │   ├── src/
-│   │   │   ├── controllers/
-│   │   │   ├── models/
-│   │   │   ├── routes/
-│   │   │   └── db/
-│   │   └── Dockerfile
-│   ├── product-service/                # Product microservice
-│   │   ├── src/
-│   │   │   ├── controllers/
-│   │   │   ├── models/
-│   │   │   ├── routes/
-│   │   │   └── db/
-│   │   └── Dockerfile
-│   └── order-service/                  # Order microservice
-│       ├── src/
-│       │   ├── controllers/
-│       │   ├── models/
-│       │   ├── routes/
-│       │   └── db/
-│       └── Dockerfile
-├── helm/
-│   ├── charts/
-│   │   ├── frontend-test/              # Frontend Helm chart
-│   │   ├── api-gateway/                # API Gateway Helm chart
-│   │   ├── user-service/               # User service Helm chart
-│   │   ├── product-service/            # Product service Helm chart
-│   │   └── order-service/              # Order service Helm chart
-│   ├── cluster-secret-store.yaml       # AWS Secrets integration
-│   └── external-secret.yaml            # MongoDB secret sync
-├── terraform/
-│   ├── main.tf                         # Main Terraform config
-│   ├── variables.tf
-│   ├── outputs.tf
-│   └── modules/
-│       ├── vpc/                        # VPC module
-│       ├── eks/                        # EKS cluster module
-│       ├── ecr/                        # Container registry module
-│       └── secrets-manager/            # Secrets management module
-├── ARCHITECTURE.md                     # Detailed architecture documentation
-└── README.md
-```
-
-## 🔐 Security Features
-
-- ✅ **Network Isolation**: Backend services in private subnets
-- ✅ **ClusterIP Services**: Internal services not exposed externally
-- ✅ **Secrets Management**: AWS Secrets Manager for sensitive data
-- ✅ **IAM Roles**: Fine-grained permissions for EKS nodes
-- ✅ **Container Scanning**: ECR image scanning enabled
-- ✅ **Multi-AZ Deployment**: High availability across 3 availability zones
-
 ## 📊 Monitoring & Operations
 
 ### Check Deployment Status
@@ -309,11 +262,7 @@ kubectl describe pod <pod-name> -n default
 ### Scale Services
 
 ```bash
-# Scale a deployment
-kubectl scale deployment user-service --replicas=3
-
-# Or update Helm values
-helm upgrade user-service ./helm/charts/user-service --set replicaCount=3
+helm upgrade user-service ./helm/charts/<service-name> --set replicaCount=3
 ```
 
 ## 🧪 Local Development (Optional)
@@ -331,25 +280,6 @@ docker-compose logs -f
 docker-compose down
 ```
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 📞 Support
-
-For issues or questions, please open an issue on GitHub.
-
----
-
-**Built with ❤️ using modern cloud-native technologies**
 
 
 
